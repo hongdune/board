@@ -22,16 +22,6 @@ async def init_db():
                 created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
-        await db.execute("""
-            CREATE TABLE IF NOT EXISTS comments (
-                id               INTEGER PRIMARY KEY AUTOINCREMENT,
-                post_id          INTEGER NOT NULL REFERENCES posts(id),
-                content          TEXT NOT NULL,
-                author_id        TEXT NOT NULL,
-                author_password  TEXT NOT NULL,
-                created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        """)
         await db.commit()
 
 

@@ -19,19 +19,3 @@ class PostResponse(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
-
-
-class CommentCreate(BaseModel):
-    content: str
-    author_id: str
-    author_password: str
-
-
-class CommentResponse(BaseModel):
-    id: int
-    post_id: int
-    content: str
-    author_id: str
-    created_at: datetime
-
-    model_config = {"from_attributes": True}

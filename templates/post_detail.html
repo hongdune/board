@@ -96,30 +96,13 @@
 
     <!-- 댓글 -->
     <div class="card">
-      <div class="section-title">댓글 {{ comments | length }}개</div>
+      <!-- TODO: 댓글 목록을 구현하세요 -->
+      <!-- 참고: post_detail 라우터에서 comments 리스트가 전달됩니다 -->
+      <!-- comments 테이블 스키마: id, post_id, content, author_id, author_password, created_at -->
 
-      {% if comments %}
-        {% for comment in comments %}
-          <div class="comment" id="comment-{{ comment.id }}">
-            <div class="comment-body">{{ comment.content }}</div>
-            <div class="comment-meta">
-              <span>{{ comment.author_id }} · {{ comment.created_at[:16] }}</span>
-              <button class="btn-delete" data-comment-id="{{ comment.id }}" data-post-id="{{ post.id }}">삭제</button>
-            </div>
-          </div>
-        {% endfor %}
-      {% else %}
-        <p class="empty-comment">아직 댓글이 없습니다.</p>
-      {% endif %}
-
-      <form class="comment-form" method="post" action="/posts/{{ post.id }}/comments">
-        <div class="comment-form-row">
-          <input type="text" name="author_id" placeholder="아이디" required maxlength="50">
-          <input type="password" name="author_password" placeholder="비밀번호 (삭제 시 사용)" required maxlength="100">
-        </div>
-        <textarea name="content" placeholder="댓글을 입력하세요" required maxlength="1000"></textarea>
-        <button class="btn-submit" type="submit">댓글 작성</button>
-      </form>
+      <!-- TODO: 댓글 작성 폼을 구현하세요 -->
+      <!-- action: POST /posts/{{ post.id }}/comments -->
+      <!-- 필드: content, author_id, author_password -->
     </div>
   </div>
 

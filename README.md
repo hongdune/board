@@ -1,158 +1,100 @@
-# Simple Board Project (Solution)
+# Simple Board Project
 
-이 저장소는 FastAPI 기반 게시판 프로젝트의 **완성본(Solution)**입니다.
-학생용 과제(`main` 브랜치)의 정답 구현을 포함하고 있습니다.
-단, 정답의 의미는 강사가 상정한 최종 결과물일뿐 실제 구현된 결과는 이와 동일하지 않는게 정상이며 지시한 동작만 충족하면 정답입니다.
-
----
-
-## 프로젝트 개요
-
-* 게시글 CRUD (생성 / 조회 / 수정 / 삭제)
-* 댓글 기능 (작성 / 삭제)
-* 이미지 업로드 지원
-* SQLite 기반 비동기 데이터 처리
+FastAPI + SQLite 기반 게시판 실습 프로젝트입니다.
+게시글 CRUD는 완성되어 있으며, **댓글 기능을 직접 구현**하는 것이 목표입니다.
 
 ---
 
-## 기술 스택
-
-* Python
-* FastAPI
-* SQLite
-* Jinja2
-* aiosqlite
-
----
-
-## 프로젝트 구조
-
-```
-.
-├── main.py
-├── database.py
-├── models.py
-├── routers/
-│   ├── posts.py
-│   └── comments.py
-├── templates/
-├── static/
-│   └── uploads/
-├── requirements.txt
-└── README.md
-```
-
----
-
-## 실행 방법
+## 환경 설정 및 실행
 
 ### 1. 가상환경 생성 및 활성화
 
-```
+```bash
 python -m venv .venv
-.venv\Scripts\activate   # Windows
+
+# Windows
+.venv\Scripts\activate
+
+# Mac / Linux
+source .venv/bin/activate
 ```
 
 ### 2. 패키지 설치
 
-```
+```bash
 pip install -r requirements.txt
 ```
 
 ### 3. 서버 실행
 
-```
+```bash
 uvicorn main:app --reload
 ```
 
-### 4. 접속
+### 4. 브라우저 접속
 
 ```
-http://localhost:8000
+http://localhost:8000/posts
 ```
 
 ---
 
-## 주요 기능 설명
+## 구현해야 할 기능
 
-### 게시글 (Posts)
+아래 세 파일을 수정하여 댓글 기능을 완성하세요.
 
-* 게시글 생성 및 목록 조회
-* 상세 조회
-* 비밀번호 기반 수정 / 삭제
+### 1. `database.py`
+- `init_db()` 함수 안에 `comments` 테이블 CREATE TABLE 구문 추가
 
-### 댓글 (Comments)
+반드시 포함해야 할 컬럼: `id`, `post_id`, `content`, `author_id`, `author_password`, `created_at`
 
-* 댓글 작성
-* 비밀번호 기반 삭제
+### 2. `routers/comments.py`
+- `POST /posts/{post_id}/comments` — 댓글 작성
+- `POST /comments/{comment_id}/delete` — 댓글 삭제 (비밀번호 확인)
 
-### 이미지 업로드
+`routers/posts.py`의 `create_post`, `delete_post` 패턴을 참고하세요.
 
-* 게시글 작성 시 이미지 URL 저장
-* `static/uploads/` 경로 활용 가능
-
----
-
-## 데이터베이스
-
-* SQLite (`board.db`) 사용
-* 서버 실행 시 자동으로 테이블 생성
-
-### 테이블 구조
-
-#### posts
-
-* id (PK)
-* title
-* content
-* author_id
-* author_password
-* image_url
-* created_at
-
-#### comments
-
-* id (PK)
-* post_id (FK)
-* content
-* author_id
-* author_password
-* created_at
+### 3. `templates/post_detail.html`
+- 댓글 목록 출력 (라우터에서 `comments` 리스트가 전달됨)
+- 댓글 작성 폼 (`action`: `POST /posts/{{ post.id }}/comments`, 필드: `content`, `author_id`, `author_password`)
 
 ---
 
-## 브랜치 구조
+## 건드리면 안 되는 파일
 
-* `main` → 학생용 코드 (일부 기능 미구현)
-* `solution` → 현재 브랜치 (완성본)
-
----
-
-## 주의사항
-
-* 업로드 파일은 버전 관리 대상 아님
-* `static/uploads/.gitkeep`은 폴더 유지를 위한 파일
-
----
-
-## 개발 참고
-
-* API 문서: `/docs` (Swagger UI)
-* DB 초기화: `POST /reset`
+| 파일 | 이유 |
+|---|---|
+| `main.py` | 앱 진입점, 라우터 등록 완료 |
+| `routers/posts.py` | 게시글 기능 완성본 (참고용) |
+| `routers/reset.py` | DB 초기화 유틸리티 |
+| `models.py` | Pydantic 모델 (댓글 모델 불필요) |
+| `templates/list.html` | 게시글 목록 페이지 |
+| `templates/post_create.html` | 게시글 작성 페이지 |
+| `templates/post_edit.html` | 게시글 수정 페이지 |
 
 ---
 
-## 목적
+## 브랜치 안내
 
-이 프로젝트는 다음을 학습하기 위한 예제입니다:
-
-* FastAPI 라우터 구조 설계
-* 비동기 DB 처리
-* 템플릿 기반 웹 서비스 구현
-* 간단한 인증 로직 (비밀번호 검증)
+| 브랜치 | 설명 |
+|---|---|
+| `main` | 실습용 코드 (현재 브랜치, 댓글 미구현) |
+| `solution` | 완성본 (참고용) |
 
 ---
 
-## 라이선스
+## API 문서
 
-교육 및 학습 목적의 프로젝트입니다.
+서버 실행 후 아래에서 Swagger UI를 확인할 수 있습니다.
+
+```
+http://localhost:8000/docs
+```
+
+---
+
+## 기타
+
+- DB 초기화: `POST /reset` (서버 실행 중 호출)
+- 이미지 업로드: 게시글 작성/수정 시 jpg, jpeg, png, gif 허용
+- 업로드된 이미지는 `static/uploads/`에 저장됩니다.
