@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ post.title }}</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f5f6f8; color: #222; }
+
+    .container { max-width: 780px; margin: 48px auto; padding: 0 16px; }
+
+    .back { font-size: 0.85rem; color: #4a90e2; text-decoration: none; display: inline-block; margin-bottom: 20px; }
+    .back:hover { text-decoration: underline; }
+
+    /* 게시글 카드 */
+    .card { background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.08); padding: 32px; margin-bottom: 20px; }
+
+    .post-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 10px; }
+    .post-meta { font-size: 0.82rem; color: #aaa; margin-bottom: 24px; }
+    .post-image { max-width: 100%; border-radius: 6px; margin-bottom: 24px; display: block; }
+    .post-content { line-height: 1.8; white-space: pre-wrap; font-size: 0.95rem; }
+
+    .alert-error {
+      background: #fdecea; color: #c0392b; border: 1px solid #f5c6c3;
+      border-radius: 6px; padding: 10px 14px; font-size: 0.88rem; margin-bottom: 20px;
+    }
+    .post-actions { display: flex; gap: 8px; margin-top: 24px; justify-content: flex-end; }
+    .btn { padding: 7px 16px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; border: none; text-decoration: none; display: inline-block; }
+    .btn-edit { background: #f0f2f5; color: #444; }
+    .btn-edit:hover { background: #e4e6ea; }
+    .btn-del { background: #fdecea; color: #e05050; }
+    .btn-del:hover { background: #fbd5d2; }
+
+    /* 댓글 섹션 */
+    .section-title { font-size: 1rem; font-weight: 700; margin-bottom: 16px; color: #444; }
+
+    .comment { padding: 14px 0; border-bottom: 1px solid #f0f0f0; }
+    .comment:first-child { border-top: 1px solid #f0f0f0; }
+    .comment-body { font-size: 0.9rem; line-height: 1.6; margin-bottom: 6px; }
+    .comment-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: #aaa; }
+    .btn-delete { background: none; border: none; color: #e05050; cursor: pointer; font-size: 0.78rem; padding: 0; }
+    .btn-delete:hover { text-decoration: underline; }
+
+    .empty-comment { font-size: 0.88rem; color: #bbb; padding: 20px 0; }
+
+    /* 댓글 작성 폼 */
+    .comment-form { margin-top: 24px; display: flex; flex-direction: column; gap: 10px; }
+    .comment-form-row { display: flex; gap: 10px; }
+    .comment-form-row input { flex: 1; }
+    .comment-form input[type="text"],
+    .comment-form input[type="password"],
+    .comment-form textarea {
+      padding: 9px 12px; border: 1px solid #ddd; border-radius: 6px;
+      font-size: 0.9rem; font-family: inherit; color: #222;
+      transition: border-color .15s;
+    }
+    .comment-form input[type="text"]:focus,
+    .comment-form input[type="password"]:focus,
+    .comment-form textarea:focus { outline: none; border-color: #4a90e2; }
+    .comment-form textarea { resize: vertical; min-height: 72px; }
+    .btn-submit {
+      align-self: flex-end; padding: 8px 20px; background: #4a90e2;
+      color: #fff; border: none; border-radius: 6px; font-size: 0.9rem; cursor: pointer;
+    }
+    .btn-submit:hover { background: #357abd; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a class="back" href="/posts">← 목록으로</a>
+
+    {% if error == 'wrong_password' %}
+      <div class="alert-error">비밀번호가 틀렸습니다.</div>
+    {% endif %}
+
+    <!-- 게시글 -->
+    <div class="card">
+      <div class="post-title">{{ post.title }}</div>
+      <div class="post-meta">{{ post.author_id }} · {{ post.created_at[:16] }}</div>
+
+      {% if post.image_url %}
+        <img class="post-image" src="{{ post.image_url }}" alt="첨부 이미지">
+      {% endif %}
+
+      <div class="post-content">{{ post.content }}</div>
+
+      <div class="post-actions">
+        <a class="btn btn-edit" href="/posts/{{ post.id }}/edit">수정</a>
+        <form id="delete-form" method="post" action="/posts/{{ post.id }}/delete" style="margin:0">
+          <input type="hidden" id="delete-password" name="password" value="">
+          <button class="btn btn-del" type="button" id="delete-btn">삭제</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 댓글 -->
+    <div class="card">
+      <div class="section-title">댓글 {{ comments | length }}개</div>
+
+      {% if comments %}
+        {% for comment in comments %}
+          <div class="comment" id="comment-{{ comment.id }}">
+            <div class="comment-body">{{ comment.content }}</div>
+            <div class="comment-meta">
+              <span>{{ comment.author_id }} · {{ comment.created_at[:16] }}</span>
+              <button class="btn-delete" data-comment-id="{{ comment.id }}" data-post-id="{{ post.id }}">삭제</button>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="empty-comment">아직 댓글이 없습니다.</p>
+      {% endif %}
+
+      <form class="comment-form" method="post" action="/posts/{{ post.id }}/comments">
+        <div class="comment-form-row">
+          <input type="text" name="author_id" placeholder="아이디" required maxlength="50">
+          <input type="password" name="author_password" placeholder="비밀번호 (삭제 시 사용)" required maxlength="100">
+        </div>
+        <textarea name="content" placeholder="댓글을 입력하세요" required maxlength="1000"></textarea>
+        <button class="btn-submit" type="submit">댓글 작성</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('delete-btn').addEventListener('click', function () {
+      const pw = prompt('비밀번호를 입력하세요.');
+      if (pw === null) return;
+      document.getElementById('delete-password').value = pw;
+      document.getElementById('delete-form').submit();
+    });
+
+    document.addEventListener('click', async function (e) {
+      const btn = e.target.closest('.btn-delete');
+      if (!btn) return;
+      const pw = prompt('댓글 비밀번호를 입력하세요.');
+      if (pw === null) return;
+      const commentId = btn.dataset.commentId;
+      const body = new FormData();
+      body.append('password', pw);
+      const res = await fetch('/comments/' + commentId + '/delete', { method: 'POST', body });
+      const data = await res.json();
+      if (res.ok) {
+        document.getElementById('comment-' + commentId).remove();
+      } else {
+        alert(data.detail || '삭제에 실패했습니다.');
+      }
+    });
+  </script>
+</body>
+</html>
