@@ -26,19 +26,19 @@ git clone https://github.com/hongdune/board.git
 cd board
 ```
 
-### 2. 패키지 설치
+### 3. 패키지 설치
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. 서버 실행
+### 4. 서버 실행
 
 ```bash
 uvicorn main:app --reload
 ```
 
-### 4. 브라우저 접속
+### 5. 브라우저 접속
 
 ```
 http://localhost:8000/posts
