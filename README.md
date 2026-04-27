@@ -68,7 +68,7 @@ uvicorn main:app --reload
 ### 4. 접속
 
 ```
-http://localhost:8000
+http://localhost:8000/posts
 ```
 
 ---
