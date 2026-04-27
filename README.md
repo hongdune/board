@@ -19,6 +19,13 @@ python -m venv .venv
 source .venv/bin/activate
 ```
 
+### 2. Git Clone
+
+```bash
+git clone https://github.com/hongdune/board.git
+cd board
+```
+
 ### 2. 패키지 설치
 
 ```bash
