@@ -69,7 +69,7 @@ http://localhost:8000/posts
 | `author_password` | TEXT | NOT NULL | 작성자 비밀번호 (실습용 평문 저장) |
 | `created_at` | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP | 작성 시각 |
 
-> 💡 posts 테이블 생성 코드를 참고하면 패턴이 동일합니다.
+>  posts 테이블 생성 코드를 참고하면 패턴이 동일합니다.
 
 ---
 
@@ -99,7 +99,7 @@ http://localhost:8000/posts
 | **출력 (성공)** | JSON: `{"ok": true}` |
 | **출력 (실패)** | 댓글 없음: `HTTPException 404`<br>비밀번호 불일치: `JSONResponse 403` `{"detail": "비밀번호가 틀렸습니다."}` |
 
-> 💡 `routers/posts.py`의 `create_post`, `delete_post` 패턴을 참고하세요.
+>  `routers/posts.py`의 `create_post`, `delete_post` 패턴을 참고하세요.
 
 ---
 
