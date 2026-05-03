@@ -219,4 +219,3 @@ http://localhost:8000/posts
 
 3. 에러가 나면 에러 메시지 전체를 Claude에게 그대로 전달하세요.
 
-# request 테스트
